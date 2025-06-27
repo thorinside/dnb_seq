@@ -1,6 +1,6 @@
 
 ifndef NT_API_PATH
-	NT_API_PATH := ../../github/distingNT_API
+	NT_API_PATH := distingNT_API
 endif
 
 INCLUDE_PATH := $(NT_API_PATH)/include
