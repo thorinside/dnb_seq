@@ -62,6 +62,13 @@ struct _DnbSeqAlgorithm_DTC {
   int snareTriggerSamples;
   int hihatTriggerSamples;
   int ghostTriggerSamples;
+
+  // Custom UI state
+  int currentSeed;
+  float bdProbability;    // 0.0-1.0
+  float snareProbability; // 0.0-1.0  
+  float ghostProbability; // 0.0-1.0
+  // Note: HH probability stays at 1.0 (backbone)
 };
 
 // The main algorithm class, stored in SRAM.
@@ -72,6 +79,7 @@ struct _DnbSeqAlgorithm : public _NT_algorithm {
   // Helper functions to manage patterns
   void generatePattern(int patternId);
   void generateVariation();
+  void generateVariationWithSeed(int seed);
   void resetToDefault();
 };
 
@@ -98,6 +106,13 @@ static char const *const enumStringsPatterns[] = {
     "Two-Step",   "Delayed Two-Step", "Steppa",   "Stompa",
     "Dance Hall", "Dimension UK",     "Halftime", "Triplet Two-Step",
     "Amen Break", "Neurofunk",        NULL};
+
+// Pattern names for display (without NULL terminator)
+static const char* const patternNames[] = {
+    "Two-Step", "Delayed Two-Step", "Steppa", "Stompa",
+    "Dance Hall", "Dimension UK", "Halftime", "Triplet Two-Step", 
+    "Amen Break", "Neurofunk"
+};
 
 // All parameters for the plugin
 static const _NT_parameter parameters[] = {
@@ -301,6 +316,58 @@ void _DnbSeqAlgorithm::generateVariation() {
   dtc->currentPattern = variation;
 }
 
+// Generates a variation using a specific seed and probability controls
+void _DnbSeqAlgorithm::generateVariationWithSeed(int seed) {
+  DrumPattern variation = dtc->basePattern; // Start from the clean base pattern
+  
+  // Set seed for deterministic variations
+  srand(seed);
+  
+  // Apply multiple random changes based on probabilities
+  for (int i = 0; i < 4; i++) { // Apply a few random changes
+    int track = rand() % 4;
+    int position = rand() % variation.steps;
+    
+    // Don't change main snare hits on beats 2 and 4 to keep the backbeat
+    bool isMainSnare =
+        (position == 4 || position == 12 || position == 20 || position == 28) &&
+        track == 1;
+    
+    if (!isMainSnare) {
+      float probability = 1.0f;
+      bool shouldChange = false;
+      
+      switch (track) {
+      case 0: // Kick
+        probability = dtc->bdProbability;
+        shouldChange = (rand() / (float)RAND_MAX) < probability;
+        if (shouldChange) {
+          variation.kick[position] = !variation.kick[position];
+        }
+        break;
+      case 1: // Snare
+        probability = dtc->snareProbability;
+        shouldChange = (rand() / (float)RAND_MAX) < probability;
+        if (shouldChange) {
+          variation.snare[position] = !variation.snare[position];
+        }
+        break;
+      case 2: // Hi-hat - always full probability (backbone)
+        variation.hihat[position] = !variation.hihat[position];
+        break;
+      case 3: // Ghost snare
+        probability = dtc->ghostProbability;
+        shouldChange = (rand() / (float)RAND_MAX) < probability;
+        if (shouldChange) {
+          variation.ghostSnare[position] = !variation.ghostSnare[position];
+        }
+        break;
+      }
+    }
+  }
+  dtc->currentPattern = variation;
+}
+
 // Resets the pattern to its original state
 void _DnbSeqAlgorithm::resetToDefault() {
   dtc->currentPattern = dtc->basePattern;
@@ -343,6 +410,12 @@ _NT_algorithm *construct(const _NT_algorithmMemoryPtrs &ptrs,
   alg->dtc->snareTriggerSamples = 0;
   alg->dtc->hihatTriggerSamples = 0;
   alg->dtc->ghostTriggerSamples = 0;
+
+  // Initialize custom UI state
+  alg->dtc->currentSeed = 0;
+  alg->dtc->bdProbability = 1.0f;
+  alg->dtc->snareProbability = 1.0f;
+  alg->dtc->ghostProbability = 1.0f;
 
   // Generate initial pattern based on default parameter value
   alg->generatePattern(alg->v[kParamPatternSelect]);
@@ -485,14 +558,24 @@ bool draw(_NT_algorithm *self) {
   // Draw the current pattern state
   if (dtc->currentPattern.steps == 0)
     return true; // Avoid division by zero
+
+  // Draw plugin title (avoiding dead zone above y=15)
+  NT_drawText(2, 20, "DnB Seq", 15, kNT_textLeft, kNT_textTiny);
   
-  // Define margins and calculate adjusted dimensions
-  const int margin = 10;
+  // Draw current pattern name on second line
+  int patternId = pThis->v[kParamPatternSelect];
+  if (patternId >= 0 && patternId < 10) {
+    NT_drawText(2, 26, patternNames[patternId], 15, kNT_textLeft, kNT_textTiny);
+  }
+  
+  // Define margins and calculate adjusted dimensions (two-line header)
+  const int margin = 6;
+  const int titleHeight = 12; // Space for two-line header
   const int displayWidth = 256;
   const int displayHeight = 64;
   const int usableWidth = displayWidth - (2 * margin); // 236px
-  const int usableHeight = displayHeight - (2 * margin); // 44px
-  const int trackHeight = usableHeight / 4; // 11px per track
+  const int usableHeight = displayHeight - (2 * margin) - titleHeight; // Space for titles
+  const int trackHeight = usableHeight / 4; // Height per track
   const int labelWidth = 35; // Increased space for full track names
   const int gridWidth = usableWidth - labelWidth; // Width available for step grid
   int stepWidth = gridWidth / dtc->currentPattern.steps;
@@ -502,29 +585,29 @@ bool draw(_NT_algorithm *self) {
     const char *trackName = nullptr;
     int trackColor = 15; // Default color
     
-    // Text positioning: margin + small offset, margin + track position + vertical center
+    // Text positioning: margin + small offset, track area + better vertical centering
     int textX = margin + 2;
-    int textY = margin + track * trackHeight + (trackHeight / 2) + 1; // Center vertically
+    int textY = margin + titleHeight + track * trackHeight + trackHeight - 2; // Align with track area
     
     switch (track) {
     case 0:
       trackName = "KICK";
-      trackColor = 12; // Distinctive color for kick
+      trackColor = 3; // Darker color for kick
       patternTrack = dtc->currentPattern.kick;
       break;
     case 1:
       trackName = "SNARE";
-      trackColor = 14; // Distinctive color for snare
+      trackColor = 5; // Darker color for snare
       patternTrack = dtc->currentPattern.snare;
       break;
     case 2:
       trackName = "HIHAT";
-      trackColor = 13; // Distinctive color for hihat
+      trackColor = 7; // Darker color for hihat
       patternTrack = dtc->currentPattern.hihat;
       break;
     case 3:
       trackName = "GHOST";
-      trackColor = 11; // Distinctive color for ghost snare
+      trackColor = 9; // Darker color for ghost snare
       patternTrack = dtc->currentPattern.ghostSnare;
       break;
     }
@@ -533,19 +616,19 @@ bool draw(_NT_algorithm *self) {
     
     // Draw subtle horizontal separator line between tracks (except last one)
     if (track < 3) {
-      int separatorY = margin + (track + 1) * trackHeight - 1;
+      int separatorY = margin + titleHeight + (track + 1) * trackHeight - 1;
       NT_drawShapeI(kNT_line, margin, separatorY, 
                     margin + usableWidth, separatorY, 7);
     }
 
     if (patternTrack) {
       for (int step = 0; step < dtc->currentPattern.steps; ++step) {
-        // Step grid positioning: margin + label space + step offset, margin + track offset
+        // Step grid positioning: margin + label space + step offset, margin + title + track offset
         int x = margin + labelWidth + step * stepWidth;
-        int y = margin + track * trackHeight;
+        int y = margin + titleHeight + track * trackHeight;
         
-        // Draw background grid for all steps (subtle outline)
-        NT_drawShapeI(kNT_box, x, y, x + stepWidth - 2, y + trackHeight - 2, 8);
+        // Draw background grid for all steps (darker outline)
+        NT_drawShapeI(kNT_box, x, y, x + stepWidth - 2, y + trackHeight - 2, 1);
         
         // Draw active steps with track-specific colors
         if (patternTrack[step]) {
@@ -565,6 +648,78 @@ bool draw(_NT_algorithm *self) {
   return true; // Hide default parameter line
 }
 
+// --- Custom UI Functions ---
+
+uint32_t hasCustomUi(_NT_algorithm *self) {
+  return kNT_encoderL | kNT_encoderR | kNT_encoderButtonL | kNT_encoderButtonR | 
+         kNT_potButtonC | kNT_potL | kNT_potR;
+}
+
+void customUi(_NT_algorithm *self, const _NT_uiData &data) {
+  _DnbSeqAlgorithm *pThis = (_DnbSeqAlgorithm *)self;
+  
+  // Right encoder: Change seed and generate variation
+  if (data.encoders[1] != 0) {
+    pThis->dtc->currentSeed += data.encoders[1];
+    pThis->generateVariationWithSeed(pThis->dtc->currentSeed);
+  }
+  
+  // Right encoder button: Reset pattern to default
+  if ((data.controls & kNT_encoderButtonR) && !(data.lastButtons & kNT_encoderButtonR)) {
+    pThis->resetToDefault();
+  }
+  
+  // Left encoder: Change pattern
+  if (data.encoders[0] != 0) {
+    int currentPattern = pThis->v[kParamPatternSelect];
+    currentPattern += data.encoders[0];
+    if (currentPattern < 0) currentPattern = 9;
+    if (currentPattern > 9) currentPattern = 0;
+    NT_setParameterFromUi(NT_algorithmIndex(self), kParamPatternSelect + NT_parameterOffset(), currentPattern);
+  }
+  
+  // Left encoder button: Reset pattern to default
+  if ((data.controls & kNT_encoderButtonL) && !(data.lastButtons & kNT_encoderButtonL)) {
+    pThis->resetToDefault();
+  }
+  
+  // Center pot button: Exit
+  if ((data.controls & kNT_potButtonC) && !(data.lastButtons & kNT_potButtonC)) {
+    exit(0);
+  }
+  
+  // Left pot: BD probability
+  if (data.controls & kNT_potL) {
+    pThis->dtc->bdProbability = data.pots[0];
+  }
+  
+  // Right pot: Snare and Ghost probability (split the pot range)
+  if (data.controls & kNT_potR) {
+    float potValue = data.pots[2];
+    if (potValue < 0.5f) {
+      // First half controls snare probability
+      pThis->dtc->snareProbability = potValue * 2.0f;
+      pThis->dtc->ghostProbability = 1.0f;
+    } else {
+      // Second half controls ghost probability
+      pThis->dtc->snareProbability = 1.0f;
+      pThis->dtc->ghostProbability = (potValue - 0.5f) * 2.0f;
+    }
+  }
+}
+
+void setupUi(_NT_algorithm *self, _NT_float3 &pots) {
+  _DnbSeqAlgorithm *pThis = (_DnbSeqAlgorithm *)self;
+  pots[0] = pThis->dtc->bdProbability;
+  // For right pot, we need to determine which half based on current values
+  if (pThis->dtc->snareProbability < 1.0f) {
+    pots[2] = pThis->dtc->snareProbability * 0.5f;
+  } else {
+    pots[2] = 0.5f + (pThis->dtc->ghostProbability * 0.5f);
+  }
+  pots[1] = 0.5f; // Center pot has no stored value
+}
+
 // --- Factory and Plugin Entry ---
 
 static const _NT_factory factory = {
@@ -579,6 +734,9 @@ static const _NT_factory factory = {
     .step = step,
     .draw = draw,
     .tags = kNT_tagUtility,
+    .hasCustomUi = hasCustomUi,
+    .customUi = customUi,
+    .setupUi = setupUi,
 };
 
 extern "C" uintptr_t pluginEntry(_NT_selector selector, uint32_t data) {
