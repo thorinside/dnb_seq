@@ -53,6 +53,10 @@ struct _DnbSeqAlgorithm_DTC {
   bool clockHigh;
   bool resetHigh;
 
+  // Pattern queue state
+  int queuedPatternId; // -1 = no pattern queued
+  bool patternChangeQueued;
+
   // Counters for gate duration
   int kickTriggerSamples;
   int snareTriggerSamples;
@@ -330,6 +334,10 @@ _NT_algorithm *construct(const _NT_algorithmMemoryPtrs &ptrs,
   alg->dtc->clockHigh = false;
   alg->dtc->resetHigh = false;
 
+  // Initialize pattern queue state
+  alg->dtc->queuedPatternId = -1;
+  alg->dtc->patternChangeQueued = false;
+
   // Initialize trigger counters
   alg->dtc->kickTriggerSamples = 0;
   alg->dtc->snareTriggerSamples = 0;
@@ -346,8 +354,9 @@ void parameterChanged(_NT_algorithm *self, int p) {
   _DnbSeqAlgorithm *pThis = (_DnbSeqAlgorithm *)self;
 
   if (p == kParamPatternSelect) {
-    pThis->generatePattern(pThis->v[kParamPatternSelect]);
-    pThis->dtc->currentStep = 0; // Reset step on pattern change
+    // Queue the pattern change instead of applying immediately
+    pThis->dtc->queuedPatternId = pThis->v[kParamPatternSelect];
+    pThis->dtc->patternChangeQueued = true;
   } else if (p == kParamGenerateVariation) {
     if (pThis->v[kParamGenerateVariation] == 1) {
       pThis->generateVariation();
@@ -409,6 +418,13 @@ void step(_NT_algorithm *self, float *busFrames, int numFramesBy4) {
         dtc->pulseCount = 0;
         dtc->currentStep = (dtc->currentStep + 1) % dtc->currentPattern.steps;
 
+        // Check for queued pattern change at the start of a new pattern cycle
+        if (dtc->currentStep == 0 && dtc->patternChangeQueued) {
+          pThis->generatePattern(dtc->queuedPatternId);
+          dtc->patternChangeQueued = false;
+          dtc->queuedPatternId = -1;
+        }
+
         // --- 2. Reset all trigger counters, then set them if there's a trigger
         // on this step ---
         dtc->kickTriggerSamples = 0;
@@ -469,38 +485,75 @@ bool draw(_NT_algorithm *self) {
   // Draw the current pattern state
   if (dtc->currentPattern.steps == 0)
     return true; // Avoid division by zero
-  int stepWidth = 256 / dtc->currentPattern.steps;
-  int trackHeight = 64 / 4;
+  
+  // Define margins and calculate adjusted dimensions
+  const int margin = 10;
+  const int displayWidth = 256;
+  const int displayHeight = 64;
+  const int usableWidth = displayWidth - (2 * margin); // 236px
+  const int usableHeight = displayHeight - (2 * margin); // 44px
+  const int trackHeight = usableHeight / 4; // 11px per track
+  const int labelWidth = 35; // Increased space for full track names
+  const int gridWidth = usableWidth - labelWidth; // Width available for step grid
+  int stepWidth = gridWidth / dtc->currentPattern.steps;
 
   for (int track = 0; track < 4; ++track) {
     const bool *patternTrack = nullptr;
+    const char *trackName = nullptr;
+    int trackColor = 15; // Default color
+    
+    // Text positioning: margin + small offset, margin + track position + vertical center
+    int textX = margin + 2;
+    int textY = margin + track * trackHeight + (trackHeight / 2) + 1; // Center vertically
+    
     switch (track) {
     case 0:
-      NT_drawText(2, track * trackHeight + 2, "K", 15);
+      trackName = "KICK";
+      trackColor = 12; // Distinctive color for kick
       patternTrack = dtc->currentPattern.kick;
       break;
     case 1:
-      NT_drawText(2, track * trackHeight + 2, "S", 15);
+      trackName = "SNARE";
+      trackColor = 14; // Distinctive color for snare
       patternTrack = dtc->currentPattern.snare;
       break;
     case 2:
-      NT_drawText(2, track * trackHeight + 2, "H", 15);
+      trackName = "HIHAT";
+      trackColor = 13; // Distinctive color for hihat
       patternTrack = dtc->currentPattern.hihat;
       break;
     case 3:
-      NT_drawText(2, track * trackHeight + 2, "G", 15);
+      trackName = "GHOST";
+      trackColor = 11; // Distinctive color for ghost snare
       patternTrack = dtc->currentPattern.ghostSnare;
       break;
+    }
+    
+    NT_drawText(textX, textY, trackName, trackColor);
+    
+    // Draw subtle horizontal separator line between tracks (except last one)
+    if (track < 3) {
+      int separatorY = margin + (track + 1) * trackHeight - 1;
+      NT_drawShapeI(kNT_line, margin, separatorY, 
+                    margin + usableWidth, separatorY, 7);
     }
 
     if (patternTrack) {
       for (int step = 0; step < dtc->currentPattern.steps; ++step) {
-        int x = 12 + step * stepWidth;
-        int y = track * trackHeight;
+        // Step grid positioning: margin + label space + step offset, margin + track offset
+        int x = margin + labelWidth + step * stepWidth;
+        int y = margin + track * trackHeight;
+        
+        // Draw background grid for all steps (subtle outline)
+        NT_drawShapeI(kNT_box, x, y, x + stepWidth - 2, y + trackHeight - 2, 8);
+        
+        // Draw active steps with track-specific colors
         if (patternTrack[step]) {
-          NT_drawShapeI(kNT_rectangle, x, y, x + stepWidth - 2,
-                        y + trackHeight - 2, 10);
+          NT_drawShapeI(kNT_rectangle, x + 1, y + 1, x + stepWidth - 3,
+                        y + trackHeight - 3, trackColor);
         }
+        
+        // Draw current step indicator with bright highlight
         if (step == dtc->currentStep) {
           NT_drawShapeI(kNT_box, x, y, x + stepWidth - 2, y + trackHeight - 2,
                         15);
