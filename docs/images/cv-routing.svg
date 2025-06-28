@@ -1,11 +1,11 @@
 <svg width="600" height="500" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      .module-bg { fill: #2a2a2a; stroke: #555; stroke-width: 2; }
-      .jack { fill: #333; stroke: #777; stroke-width: 1.5; }
-      .jack-tip { fill: #666; }
-      .jack-input { fill: #1a4d1a; stroke: #2d7d2d; }
-      .jack-output { fill: #4d1a1a; stroke: #7d2d2d; }
+      .module-bg { fill: #f8f8f8; stroke: #666; stroke-width: 2; }
+      .jack { fill: #ccc; stroke: #888; stroke-width: 1.5; }
+      .jack-tip { fill: #999; }
+      .jack-input { fill: #e8f5e8; stroke: #4a7c59; }
+      .jack-output { fill: #ffe8e8; stroke: #c55a5a; }
       .cable { stroke-width: 3; fill: none; }
       .cable-clock { stroke: #ffaa00; }
       .cable-reset { stroke: #ff0066; }
@@ -13,11 +13,11 @@
       .cable-snare { stroke: #44ff44; }
       .cable-hihat { stroke: #4488ff; }
       .cable-ghost { stroke: #ffaa44; }
-      .text-title { fill: #fff; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; }
-      .text-label { fill: #ddd; font-family: Arial, sans-serif; font-size: 11px; }
-      .text-small { fill: #bbb; font-family: Arial, sans-serif; font-size: 9px; }
-      .text-port { fill: #aaa; font-family: monospace; font-size: 8px; }
-      .legend-bg { fill: #1a1a1a; stroke: #444; stroke-width: 1; }
+      .text-title { fill: #222; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; }
+      .text-label { fill: #333; font-family: Arial, sans-serif; font-size: 11px; }
+      .text-small { fill: #555; font-family: Arial, sans-serif; font-size: 9px; }
+      .text-port { fill: #666; font-family: monospace; font-size: 8px; }
+      .legend-bg { fill: #f8f8f8; stroke: #777; stroke-width: 1; }
     </style>
   </defs>
   
