@@ -1,20 +1,20 @@
 <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      .pattern-bg { fill: #1a1a1a; stroke: #333; stroke-width: 1; }
-      .text-title { fill: #fff; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; }
-      .text-label { fill: #ddd; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; }
-      .text-small { fill: #bbb; font-family: monospace; font-size: 10px; }
-      .text-step { fill: #888; font-family: monospace; font-size: 8px; }
+      .pattern-bg { fill: #f8f8f8; stroke: #666; stroke-width: 1; }
+      .text-title { fill: #222; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; }
+      .text-label { fill: #333; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; }
+      .text-small { fill: #555; font-family: monospace; font-size: 10px; }
+      .text-step { fill: #777; font-family: monospace; font-size: 8px; }
       .track-kick { fill: #ff4444; }
       .track-snare { fill: #44ff44; }
       .track-hihat { fill: #4488ff; }
       .track-ghost { fill: #ffaa44; }
       .step-active { opacity: 0.9; }
-      .step-inactive { fill: #222; stroke: #333; stroke-width: 0.5; }
-      .beat-marker { stroke: #666; stroke-width: 1; fill: none; }
-      .beat-strong { stroke: #999; stroke-width: 2; }
-      .grid-line { stroke: #333; stroke-width: 0.5; }
+      .step-inactive { fill: #ddd; stroke: #666; stroke-width: 0.5; }
+      .beat-marker { stroke: #999; stroke-width: 1; fill: none; }
+      .beat-strong { stroke: #666; stroke-width: 2; }
+      .grid-line { stroke: #ccc; stroke-width: 0.5; }
     </style>
   </defs>
   
@@ -291,7 +291,7 @@
   
   <!-- Legend -->
   <g transform="translate(50, 450)">
-    <rect x="0" y="0" width="700" height="120" fill="#0f0f0f" stroke="#333" stroke-width="1" rx="5"/>
+    <rect x="0" y="0" width="700" height="120" fill="#f8f8f8" stroke="#666" stroke-width="1" rx="5"/>
     <text x="10" y="20" class="text-label">Pattern Legend:</text>
     
     <!-- Color legend -->

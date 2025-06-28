@@ -1,19 +1,19 @@
 <svg width="700" height="500" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      .flowchart-bg { fill: #2a2a2a; stroke: #555; stroke-width: 2; }
-      .process-box { fill: #1a4d1a; stroke: #2d7d2d; stroke-width: 2; }
-      .decision-diamond { fill: #4d1a1a; stroke: #7d2d2d; stroke-width: 2; }
-      .input-box { fill: #1a1a4d; stroke: #2d2d7d; stroke-width: 2; }
-      .output-box { fill: #4d4d1a; stroke: #7d7d2d; stroke-width: 2; }
-      .text-title { fill: #fff; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; }
-      .text-label { fill: #fff; font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; }
-      .text-small { fill: #ddd; font-family: Arial, sans-serif; font-size: 9px; }
-      .flow-arrow { stroke: #fff; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
-      .legend-bg { fill: #1a1a1a; stroke: #444; stroke-width: 1; }
+      .flowchart-bg { fill: #f8f8f8; stroke: #333; stroke-width: 2; }
+      .process-box { fill: #e8f5e8; stroke: #4a7c59; stroke-width: 2; }
+      .decision-diamond { fill: #ffe8e8; stroke: #c55a5a; stroke-width: 2; }
+      .input-box { fill: #e8e8ff; stroke: #5a5ac5; stroke-width: 2; }
+      .output-box { fill: #fff5e8; stroke: #c5a05a; stroke-width: 2; }
+      .text-title { fill: #222; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; }
+      .text-label { fill: #333; font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; }
+      .text-small { fill: #555; font-family: Arial, sans-serif; font-size: 9px; }
+      .flow-arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .legend-bg { fill: #f0f0f0; stroke: #666; stroke-width: 1; }
     </style>
     <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#fff"/>
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
     </marker>
   </defs>
   

@@ -1,23 +1,23 @@
 <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      .panel-bg { fill: #1a1a1a; stroke: #333; stroke-width: 2; }
-      .screen-bg { fill: #000; stroke: #444; stroke-width: 1; }
-      .text-title { fill: #fff; font-family: monospace; font-size: 12px; font-weight: bold; }
-      .text-label { fill: #ccc; font-family: monospace; font-size: 10px; }
-      .text-small { fill: #aaa; font-family: monospace; font-size: 8px; }
+      .panel-bg { fill: #f8f8f8; stroke: #666; stroke-width: 2; }
+      .screen-bg { fill: #e0e0e0; stroke: #777; stroke-width: 1; }
+      .text-title { fill: #222; font-family: monospace; font-size: 12px; font-weight: bold; }
+      .text-label { fill: #333; font-family: monospace; font-size: 10px; }
+      .text-small { fill: #555; font-family: monospace; font-size: 8px; }
       .track-kick { fill: #ff4444; }
       .track-snare { fill: #44ff44; }
       .track-hihat { fill: #4444ff; }
       .track-ghost { fill: #ffaa44; }
       .step-active { fill: currentColor; opacity: 0.8; }
-      .step-current { stroke: #fff; stroke-width: 2; fill: none; }
-      .step-grid { fill: #222; stroke: #333; stroke-width: 0.5; }
-      .knob { fill: #666; stroke: #999; stroke-width: 1; }
-      .knob-indicator { stroke: #fff; stroke-width: 2; fill: none; }
-      .button { fill: #333; stroke: #666; stroke-width: 1; }
+      .step-current { stroke: #333; stroke-width: 2; fill: none; }
+      .step-grid { fill: #ddd; stroke: #666; stroke-width: 0.5; }
+      .knob { fill: #999; stroke: #666; stroke-width: 1; }
+      .knob-indicator { stroke: #333; stroke-width: 2; fill: none; }
+      .button { fill: #ccc; stroke: #999; stroke-width: 1; }
       .button-active { fill: #ff6600; }
-      .cv-jack { fill: #444; stroke: #888; stroke-width: 1; }
+      .cv-jack { fill: #bbb; stroke: #555; stroke-width: 1; }
     </style>
   </defs>
   
@@ -46,7 +46,7 @@
       <rect x="0" y="16" width="192" height="7" class="step-grid"/>
       
       <!-- Step dividers -->
-      <g stroke="#333" stroke-width="0.5">
+      <g stroke="#666" stroke-width="0.5">
         <line x1="12" y1="0" x2="12" y2="23"/>
         <line x1="24" y1="0" x2="24" y2="23"/>
         <line x1="36" y1="0" x2="36" y2="23"/>

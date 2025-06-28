@@ -33,8 +33,8 @@
   <rect x="60" y="60" width="80" height="20" fill="#1a1a1a" rx="2"/>
   <text x="100" y="73" class="text-small" text-anchor="middle">Expert Sleepers</text>
   
-  <!-- Disting NT Title -->
-  <text x="200" y="75" class="text-title" text-anchor="middle">Disting NT</text>
+  <!-- disting NT Title -->
+  <text x="200" y="75" class="text-title" text-anchor="middle">disting NT</text>
   
   <!-- Main Display -->
   <rect x="80" y="90" width="240" height="60" class="screen-bg" rx="4"/>
@@ -42,32 +42,32 @@
   <text x="200" y="125" class="text-small" text-anchor="middle">♪ ♪ ♪ ♪ ♪ ♪ ♪ ♪</text>
   <text x="200" y="140" class="text-small" text-anchor="middle">Pattern visualization</text>
   
-  <!-- Left Encoder -->
-  <circle cx="120" cy="180" r="15" class="encoder"/>
-  <circle cx="120" cy="180" r="12" class="encoder-ring"/>
-  <circle cx="120" cy="167" r="2" class="encoder-dot"/>
-  <text x="120" y="205" class="text-small" text-anchor="middle">L ENCODER</text>
-  
-  <!-- Right Encoder -->
-  <circle cx="280" cy="180" r="15" class="encoder"/>
-  <circle cx="280" cy="180" r="12" class="encoder-ring"/>
-  <circle cx="273" cy="173" r="2" class="encoder-dot"/>
-  <text x="280" y="205" class="text-small" text-anchor="middle">R ENCODER</text>
-  
   <!-- Left Pot -->
-  <circle cx="90" cy="220" r="10" class="pot"/>
-  <line x1="90" y1="213" x2="90" y2="220" class="pot-indicator"/>
-  <text x="90" y="240" class="text-small" text-anchor="middle">L POT</text>
+  <circle cx="90" cy="180" r="10" class="pot"/>
+  <line x1="90" y1="173" x2="90" y2="180" class="pot-indicator"/>
+  <text x="90" y="200" class="text-small" text-anchor="middle">L POT</text>
   
   <!-- Center Pot -->
-  <circle cx="200" cy="220" r="10" class="pot"/>
-  <line x1="207" y1="220" x2="200" y2="220" class="pot-indicator"/>
-  <text x="200" y="240" class="text-small" text-anchor="middle">C POT</text>
+  <circle cx="200" cy="180" r="10" class="pot"/>
+  <line x1="207" y1="180" x2="200" y2="180" class="pot-indicator"/>
+  <text x="200" y="200" class="text-small" text-anchor="middle">C POT</text>
   
   <!-- Right Pot -->
-  <circle cx="310" cy="220" r="10" class="pot"/>
-  <line x1="310" y1="213" x2="310" y2="220" class="pot-indicator"/>
-  <text x="310" y="240" class="text-small" text-anchor="middle">R POT</text>
+  <circle cx="310" cy="180" r="10" class="pot"/>
+  <line x1="310" y1="173" x2="310" y2="180" class="pot-indicator"/>
+  <text x="310" y="200" class="text-small" text-anchor="middle">R POT</text>
+  
+  <!-- Left Encoder -->
+  <circle cx="120" cy="220" r="15" class="encoder"/>
+  <circle cx="120" cy="220" r="12" class="encoder-ring"/>
+  <circle cx="120" cy="207" r="2" class="encoder-dot"/>
+  <text x="120" y="245" class="text-small" text-anchor="middle">L ENCODER</text>
+  
+  <!-- Right Encoder -->
+  <circle cx="280" cy="220" r="15" class="encoder"/>
+  <circle cx="280" cy="220" r="12" class="encoder-ring"/>
+  <circle cx="273" cy="213" r="2" class="encoder-dot"/>
+  <text x="280" y="245" class="text-small" text-anchor="middle">R ENCODER</text>
   
   <!-- CV Input Jacks (Top Row) -->
   <g transform="translate(80, 270)">
@@ -143,40 +143,40 @@
   
   <!-- Annotations -->
   <!-- Pattern Selection -->
-  <path d="M 40 180 L 105 180" class="annotation-line"/>
-  <text x="30" y="175" class="annotation-text">Pattern</text>
-  <text x="30" y="185" class="annotation-text">Selection</text>
+  <path d="M 40 220 L 105 220" class="annotation-line"/>
+  <text x="30" y="215" class="annotation-text">Pattern</text>
+  <text x="30" y="225" class="annotation-text">Selection</text>
   
   <!-- Variation Control -->
-  <path d="M 460 180 L 295 180" class="annotation-line"/>
-  <text x="470" y="175" class="annotation-text">Variation</text>
-  <text x="470" y="185" class="annotation-text">Control</text>
+  <path d="M 460 220 L 295 220" class="annotation-line"/>
+  <text x="470" y="215" class="annotation-text">Variation</text>
+  <text x="470" y="225" class="annotation-text">Control</text>
   
   <!-- Clock Input -->
   <path d="M 40 285 L 92 285" class="annotation-line"/>
   <text x="15" y="280" class="annotation-text">Clock In</text>
-  <text x="25" y="290" class="annotation-text">(CV1)</text>
+  <text x="15" y="290" class="annotation-text">(Input 1)</text>
   
   <!-- Reset Input -->
   <path d="M 40 315 L 122 315" class="annotation-line"/>
   <text x="15" y="310" class="annotation-text">Reset In</text>
-  <text x="25" y="320" class="annotation-text">(CV2)</text>
+  <text x="15" y="320" class="annotation-text">(Input 2)</text>
   
   <!-- Drum Outputs -->
   <path d="M 460 335 L 200 335" class="annotation-line"/>
   <text x="470" y="330" class="annotation-text">Drum Outputs</text>
-  <text x="465" y="340" class="annotation-text">15-18: K/S/H/G</text>
+  <text x="460" y="340" class="annotation-text">Output 3-6: K/S/H/G</text>
   
   <!-- Probability Controls -->
-  <path d="M 40 235 L 85 235" class="annotation-line"/>
-  <text x="15" y="230" class="annotation-text">BD Prob</text>
-  <text x="25" y="240" class="annotation-text">(L Pot)</text>
+  <path d="M 40 195 L 85 195" class="annotation-line"/>
+  <text x="15" y="190" class="annotation-text">BD Prob</text>
+  <text x="25" y="200" class="annotation-text">(L Pot)</text>
   
-  <path d="M 460 235 L 315 235" class="annotation-line"/>
-  <text x="470" y="230" class="annotation-text">SN/GH Prob</text>
-  <text x="475" y="240" class="annotation-text">(R Pot)</text>
+  <path d="M 460 195 L 315 195" class="annotation-line"/>
+  <text x="470" y="190" class="annotation-text">SN/GH Prob</text>
+  <text x="475" y="200" class="annotation-text">(R Pot)</text>
   
   <!-- Title -->
-  <text x="250" y="30" class="text-title" text-anchor="middle">Disting NT Hardware Layout</text>
+  <text x="250" y="30" class="text-title" text-anchor="middle">disting NT Hardware Layout</text>
   <text x="250" y="45" class="text-label" text-anchor="middle">DnB Sequencer Control Mapping</text>
 </svg>

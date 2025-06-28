@@ -44,7 +44,7 @@
   <!-- Disting NT Module -->
   <g transform="translate(250, 60)">
     <rect x="0" y="0" width="120" height="120" class="module-bg" rx="5"/>
-    <text x="60" y="15" class="text-label" text-anchor="middle">DISTING NT</text>
+    <text x="60" y="15" class="text-label" text-anchor="middle">disting NT</text>
     <text x="60" y="28" class="text-small" text-anchor="middle">DnB Sequencer</text>
     
     <!-- Input Jacks -->
@@ -61,22 +61,22 @@
     <!-- Output Jacks -->
     <circle cx="100" cy="50" r="6" class="jack jack-output"/>
     <circle cx="100" cy="50" r="2" class="jack-tip"/>
-    <text x="85" y="45" class="text-port">15</text>
+    <text x="85" y="45" class="text-port">3</text>
     <text x="70" y="45" class="text-port">KICK</text>
     
     <circle cx="100" cy="70" r="6" class="jack jack-output"/>
     <circle cx="100" cy="70" r="2" class="jack-tip"/>
-    <text x="85" y="65" class="text-port">16</text>
+    <text x="85" y="65" class="text-port">4</text>
     <text x="65" y="65" class="text-port">SNARE</text>
     
     <circle cx="100" cy="90" r="6" class="jack jack-output"/>
     <circle cx="100" cy="90" r="2" class="jack-tip"/>
-    <text x="85" y="85" class="text-port">17</text>
+    <text x="85" y="85" class="text-port">5</text>
     <text x="65" y="85" class="text-port">HIHAT</text>
     
     <circle cx="100" cy="110" r="6" class="jack jack-output"/>
     <circle cx="100" cy="110" r="2" class="jack-tip"/>
-    <text x="85" y="105" class="text-port">18</text>
+    <text x="85" y="105" class="text-port">6</text>
     <text x="65" y="105" class="text-port">GHOST</text>
   </g>
   
@@ -216,6 +216,6 @@
     <line x1="250" y1="55" x2="270" y2="55" class="cable cable-ghost"/>
     <text x="280" y="59" class="text-small">Ghost snare triggers</text>
     
-    <text x="10" y="70" class="text-small">Outputs 15-18 provide 5V gate signals (10ms duration) for triggering drum modules</text>
+    <text x="10" y="70" class="text-small">Outputs 3-6 provide 5V gate signals (10ms duration) for triggering drum modules</text>
   </g>
 </svg>

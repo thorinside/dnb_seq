@@ -17,8 +17,8 @@ DnB Seq is a specialized drum sequencer plugin for the Expert Sleepers Disting N
 
 ## Hardware Requirements
 
-### Disting NT Platform
-- Expert Sleepers Disting NT module
+### disting NT Platform
+- Expert Sleepers disting NT module
 - ARM Cortex-M7 microcontroller with 8KB SRAM constraint
 - Built-in display and encoder/pot interface
 
@@ -38,6 +38,9 @@ DnB Seq is a specialized drum sequencer plugin for the Expert Sleepers Disting N
 git clone <repository-url>
 cd dnb_seq
 
+# Initialize and update git submodules
+git submodule update --init --recursive
+
 # Build the plugin
 make all
 
@@ -48,10 +51,10 @@ make check
 make clean
 ```
 
-### Loading to Disting NT
+### Loading to disting NT
 
-1. Copy the compiled `plugins/dnb_seq.o` file to your Disting NT
-2. Load the plugin through the Disting NT interface
+1. Copy the compiled `plugins/dnb_seq.o` file to `/programs/plug-ins` on the SD card
+2. Load the plugin through the disting NT interface
 3. The plugin will appear as "DnB Seq" in the algorithm list
 
 ## User Interface
@@ -119,28 +122,28 @@ The plugin organizes controls into three logical pages:
 
 | Input | Purpose | Specification |
 |-------|---------|---------------|
-| **CV1** | Clock Input | 24 PPQN clock signal |
-| **CV2** | Reset Input | Rising edge resets to step 1 (optional) |
+| **Input 1** | Clock Input | 24 PPQN clock signal |
+| **Input 2** | Reset Input | Rising edge resets to step 1 (optional) |
 
 ### Output Connections
 
 | Output | Purpose | Specification |
 |--------|---------|---------------|
-| **CV15** | Kick Drum | 5V gate, 10ms duration |
-| **CV16** | Snare Drum | 5V gate, 10ms duration |
-| **CV17** | Hi-Hat | 5V gate, 10ms duration |
-| **CV18** | Ghost Snare | 5V gate, 10ms duration |
+| **Output 3** | Kick Drum | 5V gate, 10ms duration |
+| **Output 4** | Snare Drum | 5V gate, 10ms duration |
+| **Output 5** | Hi-Hat | 5V gate, 10ms duration |
+| **Output 6** | Ghost Snare | 5V gate, 10ms duration |
 
 ### Typical Patch
 
 ```
-Clock/LFO → CV1 (Clock Input)
-Sequencer → CV2 (Reset Input) [Optional]
+Clock/LFO → Input 1 (Clock Input)
+Sequencer → Input 2 (Reset Input) [Optional]
 
-CV15 → Kick Drum Module
-CV16 → Snare Drum Module  
-CV17 → Hi-Hat Module
-CV18 → Ghost Snare Module
+Output 3 → Kick Drum Module
+Output 4 → Snare Drum Module  
+Output 5 → Hi-Hat Module
+Output 6 → Ghost Snare Module
 
 Drum Outputs → Mixer → Audio Output
 ```
@@ -151,9 +154,9 @@ Drum Outputs → Mixer → Audio Output
 
 ### Basic Setup
 
-1. **Load Plugin**: Select "DnB Seq" from the Disting NT algorithm list
-2. **Connect Clock**: Patch your clock source to CV1 (24 PPQN recommended)
-3. **Connect Drums**: Route CV15-18 to your drum modules
+1. **Load Plugin**: Select "DnB Seq" from the disting NT algorithm list
+2. **Connect Clock**: Patch your clock source to Input 1 (24 PPQN recommended)
+3. **Connect Drums**: Route Output 3-6 to your drum modules
 4. **Select Pattern**: Use left encoder to choose from 10 patterns
 5. **Start Sequencing**: Begin clock to start pattern playback
 
@@ -171,7 +174,7 @@ Drum Outputs → Mixer → Audio Output
 
 #### Reset Options
 - **Encoder Buttons**: Instant reset to original pattern
-- **Reset Input**: External reset via CV2
+- **Reset Input**: External reset via Input 2
 - **Pattern Restart**: Reset always returns to step 1
 
 ### Advanced Usage
@@ -198,11 +201,6 @@ The left and right pots provide sophisticated control over variation generation:
 
 ## Technical Specifications
 
-### Memory Usage
-- **SRAM**: Main algorithm class (`_DnbSeqAlgorithm`)
-- **DTC**: Persistent state data (survives power cycles)
-- **Constraint**: .bss section limited to 8KB for ARM Cortex-M7
-
 ### Timing Specifications
 - **Clock Input**: 24 PPQN (6 pulses per 16th note step)
 - **Gate Duration**: Fixed 10ms for all outputs
@@ -216,8 +214,8 @@ The left and right pots provide sophisticated control over variation generation:
 - **Variation Storage**: Real-time generation, no storage required
 
 ### Compatibility
-- **Platform**: Expert Sleepers Disting NT only
-- **Firmware**: Compatible with current Disting NT firmware
+- **Platform**: Expert Sleepers disting NT only
+- **Firmware**: Compatible with current disting NT firmware
 - **Standards**: Follows Eurorack CV/Gate standards (0-5V)
 
 ## Troubleshooting
@@ -225,14 +223,14 @@ The left and right pots provide sophisticated control over variation generation:
 ### Common Issues
 
 #### No Output
-- **Check Clock**: Ensure clock signal is connected to CV1
-- **Verify Routing**: Confirm CV outputs 15-18 are properly connected
+- **Check Clock**: Ensure clock signal is connected to Input 1
+- **Verify Routing**: Confirm CV outputs 3-6 are properly connected
 - **Pattern Selection**: Some patterns may have minimal elements (check step display)
 
 #### Timing Issues
 - **Clock Rate**: Verify 24 PPQN clock (6 pulses per 16th note)
 - **Clock Level**: Ensure clock signal exceeds 1V threshold
-- **Reset Conflicts**: Check if reset input (CV2) is inadvertently triggered
+- **Reset Conflicts**: Check if reset input (Input 2) is inadvertently triggered
 
 #### Pattern Problems
 - **Variation Stuck**: Use encoder buttons to reset to original pattern
