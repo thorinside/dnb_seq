@@ -1,0 +1,169 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .panel-bg { fill: #1a1a1a; stroke: #333; stroke-width: 2; }
+      .screen-bg { fill: #000; stroke: #444; stroke-width: 1; }
+      .text-title { fill: #fff; font-family: monospace; font-size: 12px; font-weight: bold; }
+      .text-label { fill: #ccc; font-family: monospace; font-size: 10px; }
+      .text-small { fill: #aaa; font-family: monospace; font-size: 8px; }
+      .track-kick { fill: #ff4444; }
+      .track-snare { fill: #44ff44; }
+      .track-hihat { fill: #4444ff; }
+      .track-ghost { fill: #ffaa44; }
+      .step-active { fill: currentColor; opacity: 0.8; }
+      .step-current { stroke: #fff; stroke-width: 2; fill: none; }
+      .step-grid { fill: #222; stroke: #333; stroke-width: 0.5; }
+      .knob { fill: #666; stroke: #999; stroke-width: 1; }
+      .knob-indicator { stroke: #fff; stroke-width: 2; fill: none; }
+      .button { fill: #333; stroke: #666; stroke-width: 1; }
+      .button-active { fill: #ff6600; }
+      .cv-jack { fill: #444; stroke: #888; stroke-width: 1; }
+    </style>
+  </defs>
+  
+  <!-- Main Panel -->
+  <rect x="10" y="10" width="380" height="280" class="panel-bg" rx="8"/>
+  
+  <!-- Screen Area -->
+  <rect x="30" y="30" width="256" height="64" class="screen-bg" rx="4"/>
+  
+  <!-- Plugin Title -->
+  <text x="35" y="45" class="text-title">DnB Seq</text>
+  <text x="35" y="55" class="text-small">Two-Step</text>
+  
+  <!-- Track Labels -->
+  <text x="35" y="72" class="text-small">KICK</text>
+  <text x="35" y="82" class="text-small">SNARE</text>
+  <text x="35" y="92" class="text-small">HIHAT</text>
+  
+  <!-- Step Grid -->
+  <g transform="translate(70, 65)">
+    <!-- Grid Background -->
+    <g>
+      <!-- 16 steps for Two-Step pattern -->
+      <rect x="0" y="0" width="192" height="7" class="step-grid"/>
+      <rect x="0" y="8" width="192" height="7" class="step-grid"/>
+      <rect x="0" y="16" width="192" height="7" class="step-grid"/>
+      
+      <!-- Step dividers -->
+      <g stroke="#333" stroke-width="0.5">
+        <line x1="12" y1="0" x2="12" y2="23"/>
+        <line x1="24" y1="0" x2="24" y2="23"/>
+        <line x1="36" y1="0" x2="36" y2="23"/>
+        <line x1="48" y1="0" x2="48" y2="23"/>
+        <line x1="60" y1="0" x2="60" y2="23"/>
+        <line x1="72" y1="0" x2="72" y2="23"/>
+        <line x1="84" y1="0" x2="84" y2="23"/>
+        <line x1="96" y1="0" x2="96" y2="23"/>
+        <line x1="108" y1="0" x2="108" y2="23"/>
+        <line x1="120" y1="0" x2="120" y2="23"/>
+        <line x1="132" y1="0" x2="132" y2="23"/>
+        <line x1="144" y1="0" x2="144" y2="23"/>
+        <line x1="156" y1="0" x2="156" y2="23"/>
+        <line x1="168" y1="0" x2="168" y2="23"/>
+        <line x1="180" y1="0" x2="180" y2="23"/>
+      </g>
+      
+      <!-- Two-Step Pattern - Active Steps -->
+      <!-- Kick: steps 1 and 11 (0-indexed: 0, 10) -->
+      <rect x="1" y="1" width="10" height="5" class="track-kick step-active"/>
+      <rect x="121" y="1" width="10" height="5" class="track-kick step-active"/>
+      
+      <!-- Snare: steps 5 and 13 (0-indexed: 4, 12) -->
+      <rect x="49" y="9" width="10" height="5" class="track-snare step-active"/>
+      <rect x="145" y="9" width="10" height="5" class="track-snare step-active"/>
+      
+      <!-- Hi-hat: every other step -->
+      <rect x="1" y="17" width="10" height="5" class="track-hihat step-active"/>
+      <rect x="25" y="17" width="10" height="5" class="track-hihat step-active"/>
+      <rect x="49" y="17" width="10" height="5" class="track-hihat step-active"/>
+      <rect x="73" y="17" width="10" height="5" class="track-hihat step-active"/>
+      <rect x="97" y="17" width="10" height="5" class="track-hihat step-active"/>
+      <rect x="121" y="17" width="10" height="5" class="track-hihat step-active"/>
+      <rect x="145" y="17" width="10" height="5" class="track-hihat step-active"/>
+      <rect x="169" y="17" width="10" height="5" class="track-hihat step-active"/>
+      
+      <!-- Current Step Indicator (step 3) -->
+      <rect x="37" y="0" width="10" height="23" class="step-current"/>
+    </g>
+  </g>
+  
+  <!-- Controls Section -->
+  <g transform="translate(310, 40)">
+    <!-- Left Encoder -->
+    <circle cx="15" cy="15" r="12" class="knob"/>
+    <line x1="15" y1="8" x2="15" y2="15" class="knob-indicator"/>
+    <text x="15" y="35" class="text-small" text-anchor="middle">PATTERN</text>
+    
+    <!-- Right Encoder -->
+    <circle cx="50" cy="15" r="12" class="knob"/>
+    <line x1="45" y1="10" x2="50" y2="15" class="knob-indicator"/>
+    <text x="50" y="35" class="text-small" text-anchor="middle">VARY</text>
+    
+    <!-- Left Pot -->
+    <circle cx="15" cy="55" r="8" class="knob"/>
+    <line x1="15" y1="50" x2="15" y2="55" class="knob-indicator"/>
+    <text x="15" y="70" class="text-small" text-anchor="middle">BD PROB</text>
+    
+    <!-- Right Pot -->
+    <circle cx="50" cy="55" r="8" class="knob"/>
+    <line x1="55" y1="55" x2="50" y2="55" class="knob-indicator"/>
+    <text x="50" y="70" class="text-small" text-anchor="middle">SN/GH</text>
+  </g>
+  
+  <!-- CV Outputs -->
+  <g transform="translate(30, 120)">
+    <text x="0" y="0" class="text-label">CV OUTPUTS</text>
+    
+    <!-- Output Jacks -->
+    <circle cx="20" cy="15" r="6" class="cv-jack"/>
+    <text x="20" y="30" class="text-small" text-anchor="middle">KICK</text>
+    
+    <circle cx="60" cy="15" r="6" class="cv-jack"/>
+    <text x="60" y="30" class="text-small" text-anchor="middle">SNARE</text>
+    
+    <circle cx="100" cy="15" r="6" class="cv-jack"/>
+    <text x="100" y="30" class="text-small" text-anchor="middle">HIHAT</text>
+    
+    <circle cx="140" cy="15" r="6" class="cv-jack"/>
+    <text x="140" y="30" class="text-small" text-anchor="middle">GHOST</text>
+  </g>
+  
+  <!-- CV Inputs -->
+  <g transform="translate(30, 180)">
+    <text x="0" y="0" class="text-label">CV INPUTS</text>
+    
+    <circle cx="20" cy="15" r="6" class="cv-jack"/>
+    <text x="20" y="30" class="text-small" text-anchor="middle">CLOCK</text>
+    
+    <circle cx="60" cy="15" r="6" class="cv-jack"/>
+    <text x="60" y="30" class="text-small" text-anchor="middle">RESET</text>
+  </g>
+  
+  <!-- Status Indicators -->
+  <g transform="translate(250, 120)">
+    <text x="0" y="0" class="text-label">STATUS</text>
+    
+    <circle cx="10" cy="15" r="4" fill="#00ff00" opacity="0.8"/>
+    <text x="20" y="19" class="text-small">CLOCK</text>
+    
+    <circle cx="10" cy="30" r="4" fill="#ff0000" opacity="0.3"/>
+    <text x="20" y="34" class="text-small">RESET</text>
+    
+    <rect x="5" y="45" width="60" height="12" fill="#333" stroke="#666" stroke-width="1" rx="2"/>
+    <text x="35" y="54" class="text-small" text-anchor="middle">STEP 4/16</text>
+  </g>
+  
+  <!-- Parameter Pages -->
+  <g transform="translate(250, 200)">
+    <text x="0" y="0" class="text-label">PAGES</text>
+    <rect x="0" y="5" width="30" height="15" class="button button-active"/>
+    <text x="15" y="15" class="text-small" text-anchor="middle">PTN</text>
+    
+    <rect x="35" y="5" width="30" height="15" class="button"/>
+    <text x="50" y="15" class="text-small" text-anchor="middle">MOD</text>
+    
+    <rect x="0" y="25" width="30" height="15" class="button"/>
+    <text x="15" y="35" class="text-small" text-anchor="middle">RT</text>
+  </g>
+</svg>

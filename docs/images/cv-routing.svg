@@ -1,0 +1,221 @@
+<svg width="600" height="500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .module-bg { fill: #2a2a2a; stroke: #555; stroke-width: 2; }
+      .jack { fill: #333; stroke: #777; stroke-width: 1.5; }
+      .jack-tip { fill: #666; }
+      .jack-input { fill: #1a4d1a; stroke: #2d7d2d; }
+      .jack-output { fill: #4d1a1a; stroke: #7d2d2d; }
+      .cable { stroke-width: 3; fill: none; }
+      .cable-clock { stroke: #ffaa00; }
+      .cable-reset { stroke: #ff0066; }
+      .cable-kick { stroke: #ff4444; }
+      .cable-snare { stroke: #44ff44; }
+      .cable-hihat { stroke: #4488ff; }
+      .cable-ghost { stroke: #ffaa44; }
+      .text-title { fill: #fff; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; }
+      .text-label { fill: #ddd; font-family: Arial, sans-serif; font-size: 11px; }
+      .text-small { fill: #bbb; font-family: Arial, sans-serif; font-size: 9px; }
+      .text-port { fill: #aaa; font-family: monospace; font-size: 8px; }
+      .legend-bg { fill: #1a1a1a; stroke: #444; stroke-width: 1; }
+    </style>
+  </defs>
+  
+  <!-- Title -->
+  <text x="300" y="25" class="text-title" text-anchor="middle">CV Routing Example</text>
+  <text x="300" y="40" class="text-label" text-anchor="middle">Typical DnB Sequencer Patch</text>
+  
+  <!-- Clock Source Module -->
+  <g transform="translate(50, 80)">
+    <rect x="0" y="0" width="100" height="80" class="module-bg" rx="5"/>
+    <text x="50" y="15" class="text-label" text-anchor="middle">CLOCK/LFO</text>
+    
+    <!-- Clock Output -->
+    <circle cx="80" cy="40" r="6" class="jack jack-output"/>
+    <circle cx="80" cy="40" r="2" class="jack-tip"/>
+    <text x="65" y="35" class="text-port">CLK</text>
+    
+    <!-- Reset Output -->
+    <circle cx="80" cy="60" r="6" class="jack jack-output"/>
+    <circle cx="80" cy="60" r="2" class="jack-tip"/>
+    <text x="60" y="55" class="text-port">RESET</text>
+  </g>
+  
+  <!-- Disting NT Module -->
+  <g transform="translate(250, 60)">
+    <rect x="0" y="0" width="120" height="120" class="module-bg" rx="5"/>
+    <text x="60" y="15" class="text-label" text-anchor="middle">DISTING NT</text>
+    <text x="60" y="28" class="text-small" text-anchor="middle">DnB Sequencer</text>
+    
+    <!-- Input Jacks -->
+    <circle cx="20" cy="50" r="6" class="jack jack-input"/>
+    <circle cx="20" cy="50" r="2" class="jack-tip"/>
+    <text x="5" y="45" class="text-port">1</text>
+    <text x="30" y="45" class="text-port">CLK</text>
+    
+    <circle cx="20" cy="70" r="6" class="jack jack-input"/>
+    <circle cx="20" cy="70" r="2" class="jack-tip"/>
+    <text x="5" y="65" class="text-port">2</text>
+    <text x="30" y="65" class="text-port">RST</text>
+    
+    <!-- Output Jacks -->
+    <circle cx="100" cy="50" r="6" class="jack jack-output"/>
+    <circle cx="100" cy="50" r="2" class="jack-tip"/>
+    <text x="85" y="45" class="text-port">15</text>
+    <text x="70" y="45" class="text-port">KICK</text>
+    
+    <circle cx="100" cy="70" r="6" class="jack jack-output"/>
+    <circle cx="100" cy="70" r="2" class="jack-tip"/>
+    <text x="85" y="65" class="text-port">16</text>
+    <text x="65" y="65" class="text-port">SNARE</text>
+    
+    <circle cx="100" cy="90" r="6" class="jack jack-output"/>
+    <circle cx="100" cy="90" r="2" class="jack-tip"/>
+    <text x="85" y="85" class="text-port">17</text>
+    <text x="65" y="85" class="text-port">HIHAT</text>
+    
+    <circle cx="100" cy="110" r="6" class="jack jack-output"/>
+    <circle cx="100" cy="110" r="2" class="jack-tip"/>
+    <text x="85" y="105" class="text-port">18</text>
+    <text x="65" y="105" class="text-port">GHOST</text>
+  </g>
+  
+  <!-- Drum Modules -->
+  <!-- Kick Drum -->
+  <g transform="translate(450, 80)">
+    <rect x="0" y="0" width="80" height="60" class="module-bg" rx="5"/>
+    <text x="40" y="15" class="text-label" text-anchor="middle">KICK</text>
+    <text x="40" y="28" class="text-small" text-anchor="middle">909/808</text>
+    
+    <circle cx="15" cy="45" r="6" class="jack jack-input"/>
+    <circle cx="15" cy="45" r="2" class="jack-tip"/>
+    <text x="5" y="40" class="text-port">TRIG</text>
+    
+    <circle cx="65" cy="45" r="6" class="jack jack-output"/>
+    <circle cx="65" cy="45" r="2" class="jack-tip"/>
+    <text x="55" y="40" class="text-port">OUT</text>
+  </g>
+  
+  <!-- Snare Drum -->
+  <g transform="translate(450, 160)">
+    <rect x="0" y="0" width="80" height="60" class="module-bg" rx="5"/>
+    <text x="40" y="15" class="text-label" text-anchor="middle">SNARE</text>
+    <text x="40" y="28" class="text-small" text-anchor="middle">909/Clap</text>
+    
+    <circle cx="15" cy="45" r="6" class="jack jack-input"/>
+    <circle cx="15" cy="45" r="2" class="jack-tip"/>
+    <text x="5" y="40" class="text-port">TRIG</text>
+    
+    <circle cx="65" cy="45" r="6" class="jack jack-output"/>
+    <circle cx="65" cy="45" r="2" class="jack-tip"/>
+    <text x="55" y="40" class="text-port">OUT</text>
+  </g>
+  
+  <!-- Hi-hat -->
+  <g transform="translate(450, 240)">
+    <rect x="0" y="0" width="80" height="60" class="module-bg" rx="5"/>
+    <text x="40" y="15" class="text-label" text-anchor="middle">HI-HAT</text>
+    <text x="40" y="28" class="text-small" text-anchor="middle">909/Real</text>
+    
+    <circle cx="15" cy="45" r="6" class="jack jack-input"/>
+    <circle cx="15" cy="45" r="2" class="jack-tip"/>
+    <text x="5" y="40" class="text-port">TRIG</text>
+    
+    <circle cx="65" cy="45" r="6" class="jack jack-output"/>
+    <circle cx="65" cy="45" r="2" class="jack-tip"/>
+    <text x="55" y="40" class="text-port">OUT</text>
+  </g>
+  
+  <!-- Ghost Snare -->
+  <g transform="translate(450, 320)">
+    <rect x="0" y="0" width="80" height="60" class="module-bg" rx="5"/>
+    <text x="40" y="15" class="text-label" text-anchor="middle">GHOST</text>
+    <text x="40" y="28" class="text-small" text-anchor="middle">Soft Snare</text>
+    
+    <circle cx="15" cy="45" r="6" class="jack jack-input"/>
+    <circle cx="15" cy="45" r="2" class="jack-tip"/>
+    <text x="5" y="40" class="text-port">TRIG</text>
+    
+    <circle cx="65" cy="45" r="6" class="jack jack-output"/>
+    <circle cx="65" cy="45" r="2" class="jack-tip"/>
+    <text x="55" y="40" class="text-port">OUT</text>
+  </g>
+  
+  <!-- Mixer -->
+  <g transform="translate(250, 300)">
+    <rect x="0" y="0" width="100" height="100" class="module-bg" rx="5"/>
+    <text x="50" y="15" class="text-label" text-anchor="middle">MIXER</text>
+    
+    <!-- Input channels -->
+    <circle cx="20" cy="35" r="4" class="jack jack-input"/>
+    <text x="30" y="39" class="text-small">K</text>
+    
+    <circle cx="20" cy="50" r="4" class="jack jack-input"/>
+    <text x="30" y="54" class="text-small">S</text>
+    
+    <circle cx="20" cy="65" r="4" class="jack jack-input"/>
+    <text x="30" y="69" class="text-small">H</text>
+    
+    <circle cx="20" cy="80" r="4" class="jack jack-input"/>
+    <text x="30" y="84" class="text-small">G</text>
+    
+    <!-- Master output -->
+    <circle cx="80" cy="55" r="6" class="jack jack-output"/>
+    <circle cx="80" cy="55" r="2" class="jack-tip"/>
+    <text x="60" y="50" class="text-port">MIX</text>
+  </g>
+  
+  <!-- Cables -->
+  <!-- Clock cable -->
+  <path d="M 150 120 Q 200 100 270 110" class="cable cable-clock"/>
+  
+  <!-- Reset cable -->
+  <path d="M 150 140 Q 200 150 270 130" class="cable cable-reset"/>
+  
+  <!-- Kick cable -->
+  <path d="M 370 110 Q 410 110 465 125" class="cable cable-kick"/>
+  
+  <!-- Snare cable -->
+  <path d="M 370 130 Q 410 150 465 205" class="cable cable-snare"/>
+  
+  <!-- Hi-hat cable -->
+  <path d="M 370 150 Q 410 200 465 285" class="cable cable-hihat"/>
+  
+  <!-- Ghost cable -->
+  <path d="M 370 170 Q 410 250 465 365" class="cable cable-ghost"/>
+  
+  <!-- Audio to mixer cables -->
+  <path d="M 515 125 Q 400 250 270 335" class="cable cable-kick"/>
+  <path d="M 515 205 Q 380 260 270 350" class="cable cable-snare"/>
+  <path d="M 515 285 Q 380 300 270 365" class="cable cable-hihat"/>
+  <path d="M 515 365 Q 350 365 270 380" class="cable cable-ghost"/>
+  
+  <!-- Legend -->
+  <g transform="translate(50, 400)">
+    <rect x="0" y="0" width="500" height="80" class="legend-bg" rx="5"/>
+    <text x="10" y="15" class="text-label">Signal Flow Legend:</text>
+    
+    <!-- Clock legend -->
+    <line x1="20" y1="25" x2="40" y2="25" class="cable cable-clock"/>
+    <text x="50" y="29" class="text-small">Clock signal (24 PPQN typical)</text>
+    
+    <!-- Reset legend -->
+    <line x1="20" y1="35" x2="40" y2="35" class="cable cable-reset"/>
+    <text x="50" y="39" class="text-small">Reset signal (pattern start)</text>
+    
+    <!-- Trigger legends -->
+    <line x1="250" y1="25" x2="270" y2="25" class="cable cable-kick"/>
+    <text x="280" y="29" class="text-small">Kick triggers (5V, 10ms gates)</text>
+    
+    <line x1="250" y1="35" x2="270" y2="35" class="cable cable-snare"/>
+    <text x="280" y="39" class="text-small">Snare triggers</text>
+    
+    <line x1="250" y1="45" x2="270" y2="45" class="cable cable-hihat"/>
+    <text x="280" y="49" class="text-small">Hi-hat triggers</text>
+    
+    <line x1="250" y1="55" x2="270" y2="55" class="cable cable-ghost"/>
+    <text x="280" y="59" class="text-small">Ghost snare triggers</text>
+    
+    <text x="10" y="70" class="text-small">Outputs 15-18 provide 5V gate signals (10ms duration) for triggering drum modules</text>
+  </g>
+</svg>
