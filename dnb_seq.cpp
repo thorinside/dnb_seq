@@ -125,10 +125,10 @@ static const _NT_parameter parameters[] = {
     NT_PARAMETER_CV_INPUT("Clock In", 1, 1)
     NT_PARAMETER_CV_INPUT("Reset In", 0, 0)
 
-    NT_PARAMETER_CV_OUTPUT("Kick Out", 1, 1)
-    NT_PARAMETER_CV_OUTPUT("Snare Out", 1, 2)
-    NT_PARAMETER_CV_OUTPUT("Hi-hat Out", 1, 3)
-    NT_PARAMETER_CV_OUTPUT("Ghost Snare Out", 1, 4)
+    NT_PARAMETER_CV_OUTPUT("Kick Out", 1, 15)
+    NT_PARAMETER_CV_OUTPUT("Snare Out", 1, 16)
+    NT_PARAMETER_CV_OUTPUT("Hi-hat Out", 1, 17)
+    NT_PARAMETER_CV_OUTPUT("Ghost Snare Out", 1, 18)
 
     {
         .name = "Pattern",
