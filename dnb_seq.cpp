@@ -65,10 +65,10 @@ struct _DnbSeqAlgorithm_DTC {
 
     // Custom UI state
     int currentSeed;
-    float bdProbability; // 0.0-1.0
-    float snareProbability; // 0.0-1.0
-    float ghostProbability; // 0.0-1.0
-    // Note: HH probability stays at 1.0 (backbone)
+    float bdProbability; // 0.0-1.0 - kick drum trigger probability
+    float snareProbability; // 0.0-1.0 - snare trigger probability
+    float ghostProbability; // 0.0-1.0 - ghost snare trigger probability
+    // Note: HH always triggers when pattern hit is active (no muting)
 };
 
 // The main algorithm class, stored in SRAM.
@@ -323,33 +323,269 @@ void _DnbSeqAlgorithm::generatePattern(int patternId) {
     dtc->currentPattern = p;
 }
 
+// Helper function to get track from a pattern
+void getTrackFromPattern(int patternId, int track, bool *outTrack, int &outSteps) {
+    // Clear output track first
+    memset(outTrack, 0, MAX_STEPS * sizeof(bool));
+    
+    switch (patternId) {
+        case 0: { // Two-Step
+            const bool pat_k[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
+            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
+            const bool pat_g[] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            switch (track) {
+                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
+                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
+                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
+            }
+            outSteps = 16;
+            break;
+        }
+        case 1: { // Delayed Two-Step
+            const bool pat_k[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
+            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
+            const bool pat_g[] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            switch (track) {
+                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
+                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
+                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
+            }
+            outSteps = 16;
+            break;
+        }
+        case 2: { // Steppa
+            const bool pat_k[] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0};
+            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
+            const bool pat_g[] = {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+            switch (track) {
+                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
+                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
+                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
+            }
+            outSteps = 16;
+            break;
+        }
+        case 3: { // Stompa
+            const bool pat_k[] = {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
+            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
+            const bool pat_g[] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            switch (track) {
+                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
+                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
+                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
+            }
+            outSteps = 16;
+            break;
+        }
+        case 4: { // Dance Hall
+            const bool pat_k[] = {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0};
+            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
+            const bool pat_g[] = {0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0};
+            switch (track) {
+                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
+                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
+                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
+            }
+            outSteps = 16;
+            break;
+        }
+        case 6: { // Halftime
+            const bool pat_k[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            const bool pat_s[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0};
+            const bool pat_g[] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            switch (track) {
+                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
+                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
+                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
+            }
+            outSteps = 16;
+            break;
+        }
+        case 8: { // Amen Break
+            const bool pat_k[] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0};
+            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0};
+            const bool pat_g[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            switch (track) {
+                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
+                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
+                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
+            }
+            outSteps = 16;
+            break;
+        }
+        case 9: { // Neurofunk
+            const bool pat_k[] = {1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0};
+            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
+            const bool pat_g[] = {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0};
+            switch (track) {
+                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
+                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
+                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
+            }
+            outSteps = 16;
+            break;
+        }
+        default:
+            outSteps = 16;
+            break;
+    }
+}
+
 // Generates a random variation of the current pattern
 void _DnbSeqAlgorithm::generateVariation() {
     DrumPattern variation = dtc->basePattern; // Start from the clean base pattern
-    int track = rand() % 4;
-    int position = rand() % variation.steps;
-
-    // Don't change main snare hits on beats 2 and 4 to keep the backbeat
-    bool isMainSnare =
-            (position == 4 || position == 12 || position == 20 || position == 28) &&
-            track == 1;
-
-    if (!isMainSnare) {
+    
+    // Choose variation type: 0 = track copy, 1 = slide hits, 2 = remove hit, 3 = swap hits
+    int variationType = rand() % 4;
+    
+    if (variationType == 0) {
+        // Copy a track from another pattern of the same length
+        int sourceTrack = rand() % 3; // 0=kick, 1=snare, 2=ghost
+        if (sourceTrack >= 2) sourceTrack = 3; // Map 2 to ghost snare (index 3)
+        
+        int sourcePattern = rand() % 10;
+        
+        // Get the source track
+        bool tempTrack[MAX_STEPS];
+        int steps;
+        getTrackFromPattern(sourcePattern, sourceTrack, tempTrack, steps);
+        
+        // Only copy if the source pattern has the same step count
+        if (steps == variation.steps) {
+            // Don't replace main snare hits to preserve backbeat
+            if (sourceTrack == 1) {
+                // For snare track, preserve backbeat positions
+                for (int i = 0; i < variation.steps; i++) {
+                    bool isMainSnare = (i == 4 || i == 12 || i == 20 || i == 28);
+                    if (!isMainSnare) {
+                        variation.snare[i] = tempTrack[i];
+                    }
+                }
+            } else {
+                // Copy other tracks completely
+                switch (sourceTrack) {
+                    case 0: memcpy(variation.kick, tempTrack, steps * sizeof(bool)); break;
+                    case 3: memcpy(variation.ghostSnare, tempTrack, steps * sizeof(bool)); break;
+                }
+            }
+        }
+    } else if (variationType == 1) {
+        // Slide hits forward or backward one step
+        int track = rand() % 3; // 0=kick, 1=snare, 2=ghost
+        if (track >= 2) track = 3; // Map 2 to ghost snare (index 3)
+        
+        int direction = (rand() % 2) ? 1 : -1; // +1 forward, -1 backward
+        
+        bool *targetTrack = nullptr;
         switch (track) {
-            case 0:
-                variation.kick[position] = !variation.kick[position];
-                break;
-            case 1:
-                variation.snare[position] = !variation.snare[position];
-                break;
-            case 2:
-                variation.hihat[position] = !variation.hihat[position];
-                break;
-            case 3:
-                variation.ghostSnare[position] = !variation.ghostSnare[position];
-                break;
+            case 0: targetTrack = variation.kick; break;
+            case 1: targetTrack = variation.snare; break;
+            case 3: targetTrack = variation.ghostSnare; break;
+        }
+        
+        if (targetTrack) {
+            bool tempTrack[MAX_STEPS];
+            memcpy(tempTrack, targetTrack, variation.steps * sizeof(bool));
+            
+            // Clear the original track
+            memset(targetTrack, 0, variation.steps * sizeof(bool));
+            
+            // Slide hits
+            for (int i = 0; i < variation.steps; i++) {
+                if (tempTrack[i]) {
+                    int newPos = (i + direction + variation.steps) % variation.steps;
+                    
+                    // Don't slide to main snare positions if this is snare track
+                    bool isMainSnareTarget = (newPos == 4 || newPos == 12 || newPos == 20 || newPos == 28) && track == 1;
+                    
+                    if (!isMainSnareTarget) {
+                        targetTrack[newPos] = true;
+                    } else {
+                        // Keep the hit in original position if we can't slide it
+                        targetTrack[i] = true;
+                    }
+                }
+            }
+        }
+    } else if (variationType == 2) {
+        // Remove a single hit (original variation)
+        int track = rand() % 3; // 0=kick, 1=snare, 2=ghost
+        if (track >= 2) track = 3; // Map 2 to ghost snare (index 3)
+        
+        // Find a position that currently has a hit
+        int attempts = 0;
+        int position;
+        bool foundHit = false;
+        
+        while (attempts < variation.steps && !foundHit) {
+            position = rand() % variation.steps;
+            
+            // Don't change main snare hits on beats 2 and 4 to keep the backbeat
+            bool isMainSnare = (position == 4 || position == 12 || position == 20 || position == 28) && track == 1;
+            
+            if (!isMainSnare) {
+                switch (track) {
+                    case 0: foundHit = variation.kick[position]; break;
+                    case 1: foundHit = variation.snare[position]; break;
+                    case 3: foundHit = variation.ghostSnare[position]; break;
+                }
+            }
+            attempts++;
+        }
+        
+        // Remove the hit if we found one
+        if (foundHit) {
+            switch (track) {
+                case 0: variation.kick[position] = false; break;
+                case 1: variation.snare[position] = false; break;
+                case 3: variation.ghostSnare[position] = false; break;
+            }
+        }
+    } else {
+        // Swap hits between two different tracks (original variation)
+        int track1 = rand() % 3; // 0=kick, 1=snare, 2=ghost
+        int track2 = rand() % 3;
+        if (track1 >= 2) track1 = 3; // Map to ghost snare
+        if (track2 >= 2) track2 = 3; // Map to ghost snare
+        
+        // Make sure we have two different tracks
+        if (track1 != track2) {
+            int position = rand() % variation.steps;
+            
+            // Don't change main snare hits on beats 2 and 4
+            bool isMainSnare = (position == 4 || position == 12 || position == 20 || position == 28) && 
+                              (track1 == 1 || track2 == 1);
+            
+            if (!isMainSnare) {
+                bool hit1 = false, hit2 = false;
+                
+                // Get current states
+                switch (track1) {
+                    case 0: hit1 = variation.kick[position]; break;
+                    case 1: hit1 = variation.snare[position]; break;
+                    case 3: hit1 = variation.ghostSnare[position]; break;
+                }
+                switch (track2) {
+                    case 0: hit2 = variation.kick[position]; break;
+                    case 1: hit2 = variation.snare[position]; break;
+                    case 3: hit2 = variation.ghostSnare[position]; break;
+                }
+                
+                // Swap them
+                switch (track1) {
+                    case 0: variation.kick[position] = hit2; break;
+                    case 1: variation.snare[position] = hit2; break;
+                    case 3: variation.ghostSnare[position] = hit2; break;
+                }
+                switch (track2) {
+                    case 0: variation.kick[position] = hit1; break;
+                    case 1: variation.snare[position] = hit1; break;
+                    case 3: variation.ghostSnare[position] = hit1; break;
+                }
+            }
         }
     }
+    
     dtc->currentPattern = variation;
 }
 
@@ -361,9 +597,11 @@ void _DnbSeqAlgorithm::generateVariationWithSeed(int seed) {
     srand(seed);
 
     // Apply multiple random changes based on probabilities
-    for (int i = 0; i < 4; i++) {
-        // Apply a few random changes
-        int track = rand() % 4;
+    for (int i = 0; i < 2; i++) {  // Reduced from 4 to 2 changes
+        // Only modify kick, snare, or ghost snare (never hi-hat)
+        int track = rand() % 3;  // 0=kick, 1=snare, 2=ghost
+        if (track >= 2) track = 3; // Map 2 to ghost snare (index 3)
+        
         int position = rand() % variation.steps;
 
         // Don't change main snare hits on beats 2 and 4 to keep the backbeat
@@ -389,9 +627,6 @@ void _DnbSeqAlgorithm::generateVariationWithSeed(int seed) {
                     if (shouldChange) {
                         variation.snare[position] = !variation.snare[position];
                     }
-                    break;
-                case 2: // Hi-hat - always full probability (backbone)
-                    variation.hihat[position] = !variation.hihat[position];
                     break;
                 case 3: // Ghost snare
                     probability = dtc->ghostProbability;
@@ -455,8 +690,13 @@ _NT_algorithm *construct(const _NT_algorithmMemoryPtrs &ptrs,
     alg->dtc->snareProbability = 1.0f;
     alg->dtc->ghostProbability = 1.0f;
 
-    // Generate initial pattern based on default parameter value
-    alg->generatePattern(alg->v[kParamPatternSelect]);
+    // Generate initial pattern based on parameter value (with safety check)
+    int patternId = alg->v[kParamPatternSelect];
+    const int maxPatternId = sizeof(patternNames) / sizeof(patternNames[0]) - 1;
+    if (patternId < 0 || patternId > maxPatternId) {
+        patternId = 0; // Default to Two-Step if invalid
+    }
+    alg->generatePattern(patternId);
 
     return alg;
 }
@@ -525,35 +765,51 @@ void step(_NT_algorithm *self, float *busFrames, int numFramesBy4) {
 
         if (isRisingEdge(clockIn[i], dtc->clockHigh)) {
             dtc->pulseCount++;
-            if (dtc->pulseCount >= dtc->pulsesPerStep) {
-                dtc->pulseCount = 0;
-                dtc->currentStep = (dtc->currentStep + 1) % dtc->currentPattern.steps;
 
-                // Check for queued pattern change at the start of a new pattern cycle
-                if (dtc->currentStep == 0 && dtc->patternChangeQueued) {
-                    pThis->generatePattern(dtc->queuedPatternId);
-                    dtc->patternChangeQueued = false;
-                    dtc->queuedPatternId = -1;
-                }
-
-                // --- 2. Reset all trigger counters, then set them if there's a trigger
+            // Process triggers on pulse 1 for current step
+            if (dtc->pulseCount == 1) {
+                // --- Reset all trigger counters, then set them if there's a trigger
                 // on this step ---
                 dtc->kickTriggerSamples = 0;
                 dtc->snareTriggerSamples = 0;
                 dtc->hihatTriggerSamples = 0;
                 dtc->ghostTriggerSamples = 0;
 
+                // Apply probability controls as track muting
                 if (dtc->currentPattern.kick[dtc->currentStep]) {
-                    dtc->kickTriggerSamples = gateLengthSamples;
+                    float random = (float)rand() / RAND_MAX;
+                    if (random < dtc->bdProbability) {
+                        dtc->kickTriggerSamples = gateLengthSamples;
+                    }
                 }
                 if (dtc->currentPattern.snare[dtc->currentStep]) {
-                    dtc->snareTriggerSamples = gateLengthSamples;
+                    float random = (float)rand() / RAND_MAX;
+                    if (random < dtc->snareProbability) {
+                        dtc->snareTriggerSamples = gateLengthSamples;
+                    }
                 }
                 if (dtc->currentPattern.hihat[dtc->currentStep]) {
+                    // Hi-hat always triggers (no probability control)
                     dtc->hihatTriggerSamples = gateLengthSamples;
                 }
                 if (dtc->currentPattern.ghostSnare[dtc->currentStep]) {
-                    dtc->ghostTriggerSamples = gateLengthSamples;
+                    float random = (float)rand() / RAND_MAX;
+                    if (random < dtc->ghostProbability) {
+                        dtc->ghostTriggerSamples = gateLengthSamples;
+                    }
+                }
+            }
+
+            // Advance to next step after pulse 6
+            if (dtc->pulseCount >= dtc->pulsesPerStep) {
+                dtc->currentStep = (dtc->currentStep + 1) % dtc->currentPattern.steps;
+                dtc->pulseCount = 0; // Reset pulse count after step advance
+
+                // Check for queued pattern change at the start of a new pattern cycle
+                if (dtc->currentStep == 0 && dtc->patternChangeQueued) {
+                    pThis->generatePattern(dtc->queuedPatternId);
+                    dtc->patternChangeQueued = false;
+                    dtc->queuedPatternId = -1;
                 }
             }
         }
@@ -596,15 +852,6 @@ bool draw(_NT_algorithm *self) {
     // Draw the current pattern state
     if (dtc->currentPattern.steps == 0)
         return true; // Avoid division by zero
-
-    // Draw plugin title (avoiding dead zone above y=15)
-    NT_drawText(2, 20, "DnB Seq", 15, kNT_textLeft, kNT_textTiny);
-
-    // Draw current pattern name on second line
-    int patternId = pThis->v[kParamPatternSelect];
-    if (patternId >= 0 && patternId < 10) {
-        NT_drawText(2, 26, patternNames[patternId], 15, kNT_textLeft, kNT_textTiny);
-    }
 
     // Define margins and calculate adjusted dimensions (two-line header)
     const int margin = 6;
@@ -683,6 +930,15 @@ bool draw(_NT_algorithm *self) {
         }
     }
 
+    // Draw plugin title and pattern name on top of everything (avoiding dead zone above y=15)
+    NT_drawText(2, 20, "DnB Seq", 15, kNT_textLeft, kNT_textTiny);
+
+    // Draw current pattern name on second line
+    int patternId = pThis->v[kParamPatternSelect];
+    if (patternId >= 0 && patternId < 10) {
+        NT_drawText(2, 26, patternNames[patternId], 15, kNT_textLeft, kNT_textTiny);
+    }
+
     return true; // Hide default parameter line
 }
 
@@ -690,22 +946,11 @@ bool draw(_NT_algorithm *self) {
 
 uint32_t hasCustomUi(_NT_algorithm *self) {
     return kNT_encoderL | kNT_encoderR | kNT_encoderButtonL | kNT_encoderButtonR |
-           kNT_potButtonC | kNT_potL | kNT_potR;
+           kNT_potButtonL | kNT_potButtonC | kNT_potButtonR | kNT_potL | kNT_potC | kNT_potR;
 }
 
 void customUi(_NT_algorithm *self, const _NT_uiData &data) {
     _DnbSeqAlgorithm *pThis = (_DnbSeqAlgorithm *) self;
-
-    // Right encoder: Change seed and generate variation
-    if (data.encoders[1] != 0) {
-        pThis->dtc->currentSeed += data.encoders[1];
-        pThis->generateVariationWithSeed(pThis->dtc->currentSeed);
-    }
-
-    // Right encoder button: Reset pattern to default
-    if ((data.controls & kNT_encoderButtonR) && !(data.lastButtons & kNT_encoderButtonR)) {
-        pThis->resetToDefault();
-    }
 
     // Left encoder: Change pattern
     if (data.encoders[0] != 0) {
@@ -716,45 +961,52 @@ void customUi(_NT_algorithm *self, const _NT_uiData &data) {
         NT_setParameterFromUi(NT_algorithmIndex(self), kParamPatternSelect + NT_parameterOffset(), currentPattern);
     }
 
-    // Left encoder button: Reset pattern to default
+    // Left encoder button: Generate variation
     if ((data.controls & kNT_encoderButtonL) && !(data.lastButtons & kNT_encoderButtonL)) {
+        pThis->generateVariation();
+    }
+
+    // Right encoder button: Reset pattern to default
+    if ((data.controls & kNT_encoderButtonR) && !(data.lastButtons & kNT_encoderButtonR)) {
         pThis->resetToDefault();
     }
 
-    // Center pot button: Exit
-    if ((data.controls & kNT_potButtonC) && !(data.lastButtons & kNT_potButtonC)) {
-    }
-
-    // Left pot: BD probability
+    // Left pot: Kick drum trigger probability (0-100%)
     if (data.controls & kNT_potL) {
         pThis->dtc->bdProbability = data.pots[0];
     }
 
-    // Right pot: Snare and Ghost probability (split the pot range)
+    // Center pot: Snare trigger probability (0-100%)
+    if (data.controls & kNT_potC) {
+        pThis->dtc->snareProbability = data.pots[1];
+    }
+
+    // Right pot: Ghost snare trigger probability (0-100%)
     if (data.controls & kNT_potR) {
-        float potValue = data.pots[2];
-        if (potValue < 0.5f) {
-            // First half controls snare probability
-            pThis->dtc->snareProbability = potValue * 2.0f;
-            pThis->dtc->ghostProbability = 1.0f;
-        } else {
-            // Second half controls ghost probability
-            pThis->dtc->snareProbability = 1.0f;
-            pThis->dtc->ghostProbability = (potValue - 0.5f) * 2.0f;
-        }
+        pThis->dtc->ghostProbability = data.pots[2];
+    }
+
+    // Left pot button: Reset kick drum probability to 100%
+    if ((data.controls & kNT_potButtonL) && !(data.lastButtons & kNT_potButtonL)) {
+        pThis->dtc->bdProbability = 1.0f;
+    }
+
+    // Center pot button: Reset snare probability to 100%
+    if ((data.controls & kNT_potButtonC) && !(data.lastButtons & kNT_potButtonC)) {
+        pThis->dtc->snareProbability = 1.0f;
+    }
+
+    // Right pot button: Reset ghost snare probability to 100%
+    if ((data.controls & kNT_potButtonR) && !(data.lastButtons & kNT_potButtonR)) {
+        pThis->dtc->ghostProbability = 1.0f;
     }
 }
 
 void setupUi(_NT_algorithm *self, _NT_float3 &pots) {
     _DnbSeqAlgorithm *pThis = (_DnbSeqAlgorithm *) self;
-    pots[0] = pThis->dtc->bdProbability;
-    // For right pot, we need to determine which half based on current values
-    if (pThis->dtc->snareProbability < 1.0f) {
-        pots[2] = pThis->dtc->snareProbability * 0.5f;
-    } else {
-        pots[2] = 0.5f + (pThis->dtc->ghostProbability * 0.5f);
-    }
-    pots[1] = 0.5f; // Center pot has no stored value
+    pots[0] = pThis->dtc->bdProbability;       // Left pot: Kick drum probability
+    pots[1] = pThis->dtc->snareProbability;    // Center pot: Snare probability  
+    pots[2] = pThis->dtc->ghostProbability;    // Right pot: Ghost snare probability
 }
 
 // --- Factory and Plugin Entry ---
