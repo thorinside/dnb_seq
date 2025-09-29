@@ -11,6 +11,9 @@ PLUGIN_O := $(PLUGIN_DIR)/dnb_seq.o
 inputs := $(wildcard *cpp)
 outputs := $(patsubst %.cpp,plugins/%.o,$(inputs))
 
+# Get version from git tag, fallback to "dev" if not available
+VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
+
 all: $(outputs)
 
 clean:
@@ -18,7 +21,7 @@ clean:
 
 plugins/%.o: %.cpp
 	mkdir -p $(@D)
-	arm-none-eabi-c++ -std=gnu++17 -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -fno-rtti -fno-exceptions -Os -fno-pic -Wno-reorder -Wall -MMD -MP -ffunction-sections -fdata-sections -I$(INCLUDE_PATH) -c -o $@ $^
+	arm-none-eabi-c++ -std=gnu++17 -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -fno-rtti -fno-exceptions -Os -fno-pic -Wno-reorder -Wall -MMD -MP -ffunction-sections -fdata-sections -I$(INCLUDE_PATH) -DVERSION=\"$(VERSION)\" -c -o $@ $^
 
 check: all
 	@echo "Checking for undefined symbols in $(PLUGIN_O)…"

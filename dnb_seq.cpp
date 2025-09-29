@@ -939,6 +939,9 @@ bool draw(_NT_algorithm *self) {
         NT_drawText(2, 26, patternNames[patternId], 15, kNT_textLeft, kNT_textTiny);
     }
 
+    // Draw version in top right corner
+    NT_drawText(displayWidth - 2, 20, VERSION, 8, kNT_textRight, kNT_textTiny);
+
     return true; // Hide default parameter line
 }
 
@@ -1011,10 +1014,14 @@ void setupUi(_NT_algorithm *self, _NT_float3 &pots) {
 
 // --- Factory and Plugin Entry ---
 
+#ifndef VERSION
+#define VERSION "dev"
+#endif
+
 static const _NT_factory factory = {
     .guid = NT_MULTICHAR('T', 'h', 'D', 'B'),
     .name = "DnB Seq",
-    .description = "Drum & Bass Sequencer",
+    .description = "Drum & Bass Sequencer " VERSION,
     .numSpecifications = 0,
     .specifications = NULL,
     .calculateRequirements = calculateRequirements,
