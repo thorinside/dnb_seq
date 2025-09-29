@@ -64,7 +64,6 @@ struct _DnbSeqAlgorithm_DTC {
     int ghostTriggerSamples;
 
     // Custom UI state
-    int currentSeed;
     float bdProbability; // 0.0-1.0 - kick drum trigger probability
     float snareProbability; // 0.0-1.0 - snare trigger probability
     float ghostProbability; // 0.0-1.0 - ghost snare trigger probability
@@ -82,8 +81,6 @@ struct _DnbSeqAlgorithm : public _NT_algorithm {
     void generatePattern(int patternId);
 
     void generateVariation();
-
-    void generateVariationWithSeed(int seed);
 
     void resetToDefault();
 };
@@ -323,322 +320,50 @@ void _DnbSeqAlgorithm::generatePattern(int patternId) {
     dtc->currentPattern = p;
 }
 
-// Helper function to get track from a pattern
-void getTrackFromPattern(int patternId, int track, bool *outTrack, int &outSteps) {
-    // Clear output track first
-    memset(outTrack, 0, MAX_STEPS * sizeof(bool));
-    
-    switch (patternId) {
-        case 0: { // Two-Step
-            const bool pat_k[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
-            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
-            const bool pat_g[] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            switch (track) {
-                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
-                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
-                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
-            }
-            outSteps = 16;
-            break;
-        }
-        case 1: { // Delayed Two-Step
-            const bool pat_k[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
-            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
-            const bool pat_g[] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            switch (track) {
-                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
-                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
-                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
-            }
-            outSteps = 16;
-            break;
-        }
-        case 2: { // Steppa
-            const bool pat_k[] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0};
-            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
-            const bool pat_g[] = {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
-            switch (track) {
-                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
-                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
-                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
-            }
-            outSteps = 16;
-            break;
-        }
-        case 3: { // Stompa
-            const bool pat_k[] = {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0};
-            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
-            const bool pat_g[] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            switch (track) {
-                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
-                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
-                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
-            }
-            outSteps = 16;
-            break;
-        }
-        case 4: { // Dance Hall
-            const bool pat_k[] = {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0};
-            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
-            const bool pat_g[] = {0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0};
-            switch (track) {
-                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
-                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
-                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
-            }
-            outSteps = 16;
-            break;
-        }
-        case 6: { // Halftime
-            const bool pat_k[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            const bool pat_s[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0};
-            const bool pat_g[] = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            switch (track) {
-                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
-                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
-                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
-            }
-            outSteps = 16;
-            break;
-        }
-        case 8: { // Amen Break
-            const bool pat_k[] = {1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0};
-            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0};
-            const bool pat_g[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            switch (track) {
-                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
-                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
-                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
-            }
-            outSteps = 16;
-            break;
-        }
-        case 9: { // Neurofunk
-            const bool pat_k[] = {1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0};
-            const bool pat_s[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
-            const bool pat_g[] = {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0};
-            switch (track) {
-                case 0: memcpy(outTrack, pat_k, sizeof(pat_k)); break;
-                case 1: memcpy(outTrack, pat_s, sizeof(pat_s)); break;
-                case 3: memcpy(outTrack, pat_g, sizeof(pat_g)); break;
-            }
-            outSteps = 16;
-            break;
-        }
-        default:
-            outSteps = 16;
-            break;
-    }
-}
-
 // Generates a random variation of the current pattern
 void _DnbSeqAlgorithm::generateVariation() {
-    DrumPattern variation = dtc->basePattern; // Start from the clean base pattern
-    
-    // Choose variation type: 0 = track copy, 1 = slide hits, 2 = remove hit, 3 = swap hits
-    int variationType = rand() % 4;
-    
-    if (variationType == 0) {
-        // Copy a track from another pattern of the same length
-        int sourceTrack = rand() % 3; // 0=kick, 1=snare, 2=ghost
-        if (sourceTrack >= 2) sourceTrack = 3; // Map 2 to ghost snare (index 3)
-        
-        int sourcePattern = rand() % 10;
-        
-        // Get the source track
-        bool tempTrack[MAX_STEPS];
-        int steps;
-        getTrackFromPattern(sourcePattern, sourceTrack, tempTrack, steps);
-        
-        // Only copy if the source pattern has the same step count
-        if (steps == variation.steps) {
-            // Don't replace main snare hits to preserve backbeat
-            if (sourceTrack == 1) {
-                // For snare track, preserve backbeat positions
-                for (int i = 0; i < variation.steps; i++) {
-                    bool isMainSnare = (i == 4 || i == 12 || i == 20 || i == 28);
-                    if (!isMainSnare) {
-                        variation.snare[i] = tempTrack[i];
-                    }
-                }
-            } else {
-                // Copy other tracks completely
-                switch (sourceTrack) {
-                    case 0: memcpy(variation.kick, tempTrack, steps * sizeof(bool)); break;
-                    case 3: memcpy(variation.ghostSnare, tempTrack, steps * sizeof(bool)); break;
-                }
-            }
-        }
-    } else if (variationType == 1) {
-        // Slide hits forward or backward one step
-        int track = rand() % 3; // 0=kick, 1=snare, 2=ghost
-        if (track >= 2) track = 3; // Map 2 to ghost snare (index 3)
-        
-        int direction = (rand() % 2) ? 1 : -1; // +1 forward, -1 backward
-        
-        bool *targetTrack = nullptr;
-        switch (track) {
-            case 0: targetTrack = variation.kick; break;
-            case 1: targetTrack = variation.snare; break;
-            case 3: targetTrack = variation.ghostSnare; break;
-        }
-        
-        if (targetTrack) {
-            bool tempTrack[MAX_STEPS];
-            memcpy(tempTrack, targetTrack, variation.steps * sizeof(bool));
-            
-            // Clear the original track
-            memset(targetTrack, 0, variation.steps * sizeof(bool));
-            
-            // Slide hits
-            for (int i = 0; i < variation.steps; i++) {
-                if (tempTrack[i]) {
-                    int newPos = (i + direction + variation.steps) % variation.steps;
-                    
-                    // Don't slide to main snare positions if this is snare track
-                    bool isMainSnareTarget = (newPos == 4 || newPos == 12 || newPos == 20 || newPos == 28) && track == 1;
-                    
-                    if (!isMainSnareTarget) {
-                        targetTrack[newPos] = true;
-                    } else {
-                        // Keep the hit in original position if we can't slide it
-                        targetTrack[i] = true;
-                    }
-                }
-            }
-        }
-    } else if (variationType == 2) {
-        // Remove a single hit (original variation)
-        int track = rand() % 3; // 0=kick, 1=snare, 2=ghost
-        if (track >= 2) track = 3; // Map 2 to ghost snare (index 3)
-        
-        // Find a position that currently has a hit
+    // Choose a random track (kick, snare, or ghost snare)
+    int track = rand() % 3; // 0=kick, 1=snare, 2=ghost
+    if (track >= 2) track = 3; // Map 2 to ghost snare (index 3)
+
+    // Find a position that has a hit in the base pattern
+    const bool *baseTrack = nullptr;
+    bool *currentTrack = nullptr;
+
+    switch (track) {
+        case 0:
+            baseTrack = dtc->basePattern.kick;
+            currentTrack = dtc->currentPattern.kick;
+            break;
+        case 1:
+            baseTrack = dtc->basePattern.snare;
+            currentTrack = dtc->currentPattern.snare;
+            break;
+        case 3:
+            baseTrack = dtc->basePattern.ghostSnare;
+            currentTrack = dtc->currentPattern.ghostSnare;
+            break;
+    }
+
+    if (baseTrack && currentTrack) {
+        // Find a position that has a hit in the base pattern
         int attempts = 0;
         int position;
         bool foundHit = false;
-        
-        while (attempts < variation.steps && !foundHit) {
-            position = rand() % variation.steps;
-            
-            // Don't change main snare hits on beats 2 and 4 to keep the backbeat
-            bool isMainSnare = (position == 4 || position == 12 || position == 20 || position == 28) && track == 1;
-            
-            if (!isMainSnare) {
-                switch (track) {
-                    case 0: foundHit = variation.kick[position]; break;
-                    case 1: foundHit = variation.snare[position]; break;
-                    case 3: foundHit = variation.ghostSnare[position]; break;
-                }
+
+        while (attempts < dtc->basePattern.steps && !foundHit) {
+            position = rand() % dtc->basePattern.steps;
+            if (baseTrack[position]) {
+                foundHit = true;
             }
             attempts++;
         }
-        
-        // Remove the hit if we found one
+
+        // Toggle the hit in the current pattern
         if (foundHit) {
-            switch (track) {
-                case 0: variation.kick[position] = false; break;
-                case 1: variation.snare[position] = false; break;
-                case 3: variation.ghostSnare[position] = false; break;
-            }
-        }
-    } else {
-        // Swap hits between two different tracks (original variation)
-        int track1 = rand() % 3; // 0=kick, 1=snare, 2=ghost
-        int track2 = rand() % 3;
-        if (track1 >= 2) track1 = 3; // Map to ghost snare
-        if (track2 >= 2) track2 = 3; // Map to ghost snare
-        
-        // Make sure we have two different tracks
-        if (track1 != track2) {
-            int position = rand() % variation.steps;
-            
-            // Don't change main snare hits on beats 2 and 4
-            bool isMainSnare = (position == 4 || position == 12 || position == 20 || position == 28) && 
-                              (track1 == 1 || track2 == 1);
-            
-            if (!isMainSnare) {
-                bool hit1 = false, hit2 = false;
-                
-                // Get current states
-                switch (track1) {
-                    case 0: hit1 = variation.kick[position]; break;
-                    case 1: hit1 = variation.snare[position]; break;
-                    case 3: hit1 = variation.ghostSnare[position]; break;
-                }
-                switch (track2) {
-                    case 0: hit2 = variation.kick[position]; break;
-                    case 1: hit2 = variation.snare[position]; break;
-                    case 3: hit2 = variation.ghostSnare[position]; break;
-                }
-                
-                // Swap them
-                switch (track1) {
-                    case 0: variation.kick[position] = hit2; break;
-                    case 1: variation.snare[position] = hit2; break;
-                    case 3: variation.ghostSnare[position] = hit2; break;
-                }
-                switch (track2) {
-                    case 0: variation.kick[position] = hit1; break;
-                    case 1: variation.snare[position] = hit1; break;
-                    case 3: variation.ghostSnare[position] = hit1; break;
-                }
-            }
+            currentTrack[position] = !currentTrack[position];
         }
     }
-    
-    dtc->currentPattern = variation;
-}
-
-// Generates a variation using a specific seed and probability controls
-void _DnbSeqAlgorithm::generateVariationWithSeed(int seed) {
-    DrumPattern variation = dtc->basePattern; // Start from the clean base pattern
-
-    // Set seed for deterministic variations
-    srand(seed);
-
-    // Apply multiple random changes based on probabilities
-    for (int i = 0; i < 2; i++) {  // Reduced from 4 to 2 changes
-        // Only modify kick, snare, or ghost snare (never hi-hat)
-        int track = rand() % 3;  // 0=kick, 1=snare, 2=ghost
-        if (track >= 2) track = 3; // Map 2 to ghost snare (index 3)
-        
-        int position = rand() % variation.steps;
-
-        // Don't change main snare hits on beats 2 and 4 to keep the backbeat
-        bool isMainSnare =
-                (position == 4 || position == 12 || position == 20 || position == 28) &&
-                track == 1;
-
-        if (!isMainSnare) {
-            float probability = 1.0f;
-            bool shouldChange = false;
-
-            switch (track) {
-                case 0: // Kick
-                    probability = dtc->bdProbability;
-                    shouldChange = (rand() / (float) RAND_MAX) < probability;
-                    if (shouldChange) {
-                        variation.kick[position] = !variation.kick[position];
-                    }
-                    break;
-                case 1: // Snare
-                    probability = dtc->snareProbability;
-                    shouldChange = (rand() / (float) RAND_MAX) < probability;
-                    if (shouldChange) {
-                        variation.snare[position] = !variation.snare[position];
-                    }
-                    break;
-                case 3: // Ghost snare
-                    probability = dtc->ghostProbability;
-                    shouldChange = (rand() / (float) RAND_MAX) < probability;
-                    if (shouldChange) {
-                        variation.ghostSnare[position] = !variation.ghostSnare[position];
-                    }
-                    break;
-            }
-        }
-    }
-    dtc->currentPattern = variation;
 }
 
 // Resets the pattern to its original state
@@ -685,7 +410,6 @@ _NT_algorithm *construct(const _NT_algorithmMemoryPtrs &ptrs,
     alg->dtc->ghostTriggerSamples = 0;
 
     // Initialize custom UI state
-    alg->dtc->currentSeed = 0;
     alg->dtc->bdProbability = 1.0f;
     alg->dtc->snareProbability = 1.0f;
     alg->dtc->ghostProbability = 1.0f;
