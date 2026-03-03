@@ -166,9 +166,9 @@ static const uint8_t page3[] = {
 };
 
 static const _NT_parameterPage pages[] = {
-    {.name = "Pattern", .numParams = ARRAY_SIZE(page1), .params = page1},
-    {.name = "Modify", .numParams = ARRAY_SIZE(page2), .params = page2},
-    {.name = "Routing", .numParams = ARRAY_SIZE(page3), .params = page3},
+    {.name = "Pattern", .numParams = ARRAY_SIZE(page1), .group = 0, .unused = {}, .params = page1},
+    {.name = "Modify", .numParams = ARRAY_SIZE(page2), .group = 0, .unused = {}, .params = page2},
+    {.name = "Routing", .numParams = ARRAY_SIZE(page3), .group = 0, .unused = {}, .params = page3},
 };
 
 static const _NT_parameterPages parameterPages = {
